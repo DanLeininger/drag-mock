@@ -8,6 +8,9 @@ function call(instance, methodName, args) {
 
 
 var dragMock = {
+  mouseEnter: function(targetElement, eventProperties, configCallback) {
+    return call(new DragDropAction(), 'mouseEnter', arguments);
+  },
   dragStart: function(targetElement, eventProperties, configCallback) {
     return call(new DragDropAction(), 'dragStart', arguments);
   },
