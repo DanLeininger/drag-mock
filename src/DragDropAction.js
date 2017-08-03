@@ -87,7 +87,23 @@ DragDropAction.prototype._queueExecuteNext = function() {
 
 DragDropAction.prototype.dragStart = function(targetElement, eventProperties, configCallback) {
   var params = parseParams(targetElement, eventProperties, configCallback)
-    , events = ['mousedown', 'dragstart', 'drag']
+    , events = ['mousedown', 'dragstart']
+    , dataTransfer = new DataTransfer();
+
+  this._queue(function() {
+    createAndDispatchEvents(params.targetElement, events, 'drag', dataTransfer, params.eventProperties, params.configCallback);
+
+    this.lastDragSource = targetElement;
+    this.lastDataTransfer = dataTransfer;
+  });
+
+  return this;
+};
+
+
+DragDropAction.prototype.drag = function(targetElement, eventProperties, configCallback) {
+  var params = parseParams(targetElement, eventProperties, configCallback)
+    , events = ['mousedown', 'mousemove', 'drag']
     , dataTransfer = new DataTransfer();
 
   this._queue(function() {
@@ -136,7 +152,24 @@ DragDropAction.prototype.dragLeave = function(overElement, eventProperties, conf
 
 DragDropAction.prototype.drop = function(targetElement, eventProperties, configCallback) {
   var params = parseParams(targetElement, eventProperties, configCallback);
-  var eventsOnDropTarget = ['mousemove', 'mouseup', 'drop'];
+  var eventsOnDropTarget = ['mousemove', 'mouseup'];
+  var eventsOnDragSource = ['dragend'];
+
+  this._queue(function() {
+    createAndDispatchEvents(params.targetElement, eventsOnDropTarget, 'drop', this.lastDataTransfer, params.eventProperties, params.configCallback);
+
+    if (this.lastDragSource) {
+      // trigger dragend event on last drag source element
+      createAndDispatchEvents(this.lastDragSource, eventsOnDragSource, 'drop', this.lastDataTransfer, params.eventProperties, params.configCallback);
+    }
+  });
+
+  return this;
+};
+
+DragDropAction.prototype.dragEnd = function(targetElement, eventProperties, configCallback) {
+  var params = parseParams(targetElement, eventProperties, configCallback);
+  var eventsOnDropTarget = ['mousemove', 'mouseup'];
   var eventsOnDragSource = ['dragend'];
 
   this._queue(function() {
