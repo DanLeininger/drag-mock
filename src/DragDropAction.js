@@ -85,6 +85,20 @@ DragDropAction.prototype._queueExecuteNext = function() {
 };
 
 
+DragDropAction.prototype.mouseEnter = function(targetElement, eventProperties, configCallback) {
+  var params = parseParams(targetElement, eventProperties, configCallback)
+    , events = ['mouseenter']
+
+  this._queue(function() {
+    createAndDispatchEvents(params.targetElement, events, 'mouseenter', dataTransfer, params.eventProperties, params.configCallback);
+    
+  });
+
+  return this;
+};
+
+
+
 DragDropAction.prototype.dragStart = function(targetElement, eventProperties, configCallback) {
   var params = parseParams(targetElement, eventProperties, configCallback)
     , events = ['mousedown', 'dragstart']
