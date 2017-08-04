@@ -88,6 +88,7 @@ DragDropAction.prototype._queueExecuteNext = function() {
 DragDropAction.prototype.mouseEnter = function(targetElement, eventProperties, configCallback) {
   var params = parseParams(targetElement, eventProperties, configCallback)
     , events = ['mouseenter']
+    , dataTransfer = new DataTransfer();
 
   this._queue(function() {
     createAndDispatchEvents(params.targetElement, events, 'mouseenter', dataTransfer, params.eventProperties, params.configCallback);
